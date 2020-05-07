@@ -1,9 +1,7 @@
 
 
-# <center>深度学习：homework-05-texture-network<center>
+# 深度学习：homework-05-texture-network
 
-<center><strong>张新泽<strong></center> 
-<center><strong>17373325<strong></center> 
 ## 1 实现环境
 
 - python 3.7.3
