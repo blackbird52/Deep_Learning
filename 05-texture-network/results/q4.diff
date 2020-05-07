@@ -1,0 +1,35 @@
+diff -u baseline/common.py q4/common.py
+--- baseline/common.py	2020-04-24 01:35:45.725374100 +0800
++++ q4/common.py	2020-04-24 01:41:41.954971600 +0800
+@@ -21,6 +21,7 @@
+     exp_name = os.path.basename(log_dir)
+     nr_channel = 3
+     nr_epoch = 5000
++    gram_weight = 1.0
+     '''save the image every 10 epoch'''
+     save_interval = 10
+     '''show the training loss every 10 epoch'''
+diff -u baseline/train.py q4/train.py
+--- baseline/train.py	2020-04-24 01:35:43.897679600 +0800
++++ q4/train.py	2020-04-24 01:41:54.870151900 +0800
+@@ -18,12 +18,18 @@
+ '''you need to complete this method'''
+ 
+ 
+-def get_l2_gram_loss_for_layer(noise, source, layer):
++def get_l2_EMD_loss_for_layer(noise, source, layer):
++    shape = tf.shape(getattr(noise, layer))
++    noise_transpose = tf.transpose(tf.reshape(getattr(noise, layer), shape=(-1, shape[3])))
++    noise_sort = tf.nn.top_k(noise_transpose, shape[1] * shape[2])[0]
++    source_transpose = tf.transpose(tf.reshape(getattr(source, layer), shape=(-1, shape[3])))
++    source_sort = tf.nn.top_k(source_transpose, shape[1] * shape[2])[0]
++    return config.gram_weight * tf.reduce_sum(tf.square(noise_sort - source_sort))
+ 
+ 
+ def get_gram_loss(noise, source):
+     with tf.name_scope('get_gram_loss'):
+-        gram_loss = [get_l2_gram_loss_for_layer(noise, source, layer) for layer in GRAM_LAYERS]
++        gram_loss = [get_l2_EMD_loss_for_layer(noise, source, layer) for layer in GRAM_LAYERS]
+     return tf.reduce_mean(tf.convert_to_tensor(gram_loss))
+ 
+ 

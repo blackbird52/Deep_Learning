@@ -1,0 +1,32 @@
+diff -u baseline/common.py q2/common.py
+--- baseline/common.py	2020-04-24 01:35:45.725374100 +0800
++++ q2/common.py	2020-04-24 01:38:31.621769600 +0800
+@@ -21,6 +21,7 @@
+     exp_name = os.path.basename(log_dir)
+     nr_channel = 3
+     nr_epoch = 5000
++    gram_weight = 1.0
+     '''save the image every 10 epoch'''
+     save_interval = 10
+     '''show the training loss every 10 epoch'''
+diff -u baseline/train.py q2/train.py
+--- baseline/train.py	2020-04-24 01:35:43.897679600 +0800
++++ q2/train.py	2020-04-24 01:38:56.555191900 +0800
+@@ -16,9 +16,17 @@
+ image_shape = (1, 224, 224, 3)
+ 
+ '''you need to complete this method'''
++def get_gram_matrix(feature_map):
++    shape = tf.shape(feature_map)
++    reshape_feature = tf.reshape(feature_map, shape=(-1, shape[3]))
++    transpose_feature = tf.transpose(reshape_feature)
++    return tf.matmul(transpose_feature, reshape_feature) / tf.cast((2 * shape[1] * shape[2]), tf.float32)
+ 
+ 
+ def get_l2_gram_loss_for_layer(noise, source, layer):
++    noise_gram = get_gram_matrix(getattr(noise, layer))
++    source_gram = get_gram_matrix(getattr(source, layer))
++    return config.gram_weight * tf.reduce_sum(tf.square(noise_gram - source_gram))
+ 
+ 
+ def get_gram_loss(noise, source):
