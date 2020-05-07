@@ -1,0 +1,12 @@
+diff -u baseline/train.py q1.4/train.py
+--- baseline/train.py	2020-02-29 15:46:05.692858700 +0800
++++ q1.4/train.py	2020-04-07 19:08:01.630498600 +0800
+@@ -33,7 +33,7 @@
+ def main():
+     parser = argparse.ArgumentParser()
+     parser.add_argument('-c', '--continue', dest='continue_path', required=False)
+-    parser.add_argument('-l', '--loss', default='softmax')
++    parser.add_argument('-l', '--loss', default='non-negative-max')
+     args = parser.parse_args()
+ 
+     assert args.loss in ['softmax', 'abs-max', 'square-max', 'plus-one-abs-max', 'non-negative-max']

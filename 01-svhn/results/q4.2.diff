@@ -1,0 +1,31 @@
+diff -u baseline/model.py q4.2/model.py
+--- baseline/model.py	2020-02-29 15:46:05.922247300 +0800
++++ q4.2/model.py	2020-04-08 01:48:16.045966000 +0800
+@@ -11,6 +11,7 @@
+ import tensorflow as tf
+ import tensorflow.contrib as tf_contrib
+ from common import config
++import regularizer
+ 
+ 
+ class Model():
+@@ -19,7 +20,7 @@
+         self.weight_init = tf_contrib.layers.variance_scaling_initializer(factor=1.0,
+                                 mode='FAN_IN', uniform=False)
+         self.bias_init = tf.zeros_initializer()
+-        self.reg = tf_contrib.layers.l2_regularizer(config.weight_decay)
++        self.reg = regularizer.lp_regularizer(config.weight_decay, p=4)
+ 
+     def _conv_layer(self, name, inp, kernel_shape, stride, padding='SAME',is_training=False):
+         with tf.variable_scope(name) as scope:
+diff -u baseline/regularizer.py q4.2/regularizer.py
+--- baseline/regularizer.py	2020-04-07 21:50:48.505385400 +0800
++++ q4.2/regularizer.py	2020-04-10 12:04:27.457450600 +0800
+@@ -39,6 +39,6 @@
+                                        dtype=weights.dtype.base_dtype,
+                                        name='scale')
+       reg_loss = standard_ops.reduce_sum(math_ops.pow(math_ops.abs(weights), p))
+-      return standard_ops.multiply(my_scale, reg_loss, name=name)
++      return -standard_ops.multiply(my_scale, reg_loss, name=name)
+ 
+   return lp

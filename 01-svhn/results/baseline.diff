@@ -1,0 +1,43 @@
+diff -u baseline/common.py initial/common.py
+--- baseline/common.py	2020-04-08 20:24:16.343361400 +0800
++++ initial/common.py	2020-02-29 15:46:06.716123800 +0800
+@@ -24,13 +24,13 @@
+     image_shape = (32, 32)
+     nr_class = 10
+     nr_epoch = 60
+-    weight_decay = 5e-4
++    weight_decay = 1e-10
+ 
+     show_interval = 100
+     snapshot_interval = 2
+     test_interval = 1
+ 
+-    use_extra_data = False
++    use_extra_data = True
+ 
+     @property
+     def input_shape(self):
+diff -u baseline/dataset.py initial/dataset.py
+--- baseline/dataset.py	2020-04-07 00:11:03.826142400 +0800
++++ initial/dataset.py	2020-02-29 15:46:06.345115800 +0800
+@@ -17,7 +17,7 @@
+ 
+ class Dataset():
+     #dataset_path = '../../dataset/SVHN'
+-    dataset_path = '../dataset/'
++    dataset_path = '/root/dataset/SVHN'
+ 
+ 
+     def __init__(self, dataset_name):
+diff -u baseline/regularizer.py initial/regularizer.py
+--- baseline/regularizer.py	2020-04-07 21:50:48.505385400 +0800
++++ initial/regularizer.py	2020-02-29 15:46:07.003355300 +0800
+@@ -38,7 +38,7 @@
+       my_scale = ops.convert_to_tensor(scale,
+                                        dtype=weights.dtype.base_dtype,
+                                        name='scale')
+-      reg_loss = standard_ops.reduce_sum(math_ops.pow(math_ops.abs(weights), p))
++      reg_loss = standard_ops.reduce_sum(math_ops.pow(math_ops.abs(weigths), p))
+       return standard_ops.multiply(my_scale, reg_loss, name=name)
+ 
+   return lp
